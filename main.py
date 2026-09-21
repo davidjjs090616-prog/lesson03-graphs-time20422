@@ -100,7 +100,79 @@ st.info("**이 그래프로 알 수 있는 것:** (여기에 문구를 입력하
 
 
 # ============================================================================
-# 구역 3. (다음 그래프를 위한 자리)
+# 구역 3. 날짜별 10위권 일관객 합계 (영역 그래프)
 # ============================================================================
-st.header("3. 다음 그래프 자리")
+st.header("3. 날짜별 박스오피스 10위권 일관객 합계")
+
+daily_total = df.groupby("날짜", as_index=False)["일관객"].sum()
+daily_total = daily_total.rename(columns={"일관객": "합계관객"})
+
+# 합계가 가장 컸던 날 3일 선정
+top3_days = daily_total.sort_values("합계관객", ascending=False).head(3)
+
+fig3 = px.area(
+    daily_total,
+    x="날짜",
+    y="합계관객",
+    title="날짜별 박스오피스 10위권 일관객 합계",
+    labels={"날짜": "날짜", "합계관객": "일관객 합계"},
+)
+fig3.update_traces(
+    hovertemplate="날짜: %{x|%Y-%m-%d}<br>합계 관객 수: %{y:,}명<extra></extra>"
+)
+
+# 상위 3일을 점으로 표시하고 날짜를 라벨로 표기
+fig3.add_scatter(
+    x=top3_days["날짜"],
+    y=top3_days["합계관객"],
+    mode="markers+text",
+    text=top3_days["날짜"].dt.strftime("%Y-%m-%d"),
+    textposition="top center",
+    marker=dict(color="red", size=10, symbol="star"),
+    name="합계 상위 3일",
+    hovertemplate="날짜: %{x|%Y-%m-%d}<br>합계 관객 수: %{y:,}명<extra></extra>",
+)
+
+st.plotly_chart(fig3, use_container_width=True)
+
+st.info("**이 그래프로 알 수 있는 것:** (여기에 문구를 입력하세요)")
+
+
+# ============================================================================
+# 구역 4. 누적 관객 TOP 10 영화 (가로 막대 그래프)
+# ============================================================================
+st.header("4. 이 기간 일관객 합계 TOP 10 영화")
+
+movie_summary = (
+    df.groupby("영화명")
+    .agg(관객합계=("일관객", "sum"), 상영일수=("날짜", "count"))
+    .reset_index()
+)
+
+top10_summary = movie_summary.sort_values("관객합계", ascending=False).head(10)
+# 관객이 많은 영화가 그래프 위쪽에 오도록 오름차순으로 재정렬
+top10_summary = top10_summary.sort_values("관객합계", ascending=True)
+
+fig4 = px.bar(
+    top10_summary,
+    x="관객합계",
+    y="영화명",
+    orientation="h",
+    title="일관객 합계 TOP 10 영화",
+    labels={"관객합계": "일관객 합계", "영화명": "영화명"},
+    custom_data=["상영일수"],
+)
+fig4.update_traces(
+    hovertemplate="영화: %{y}<br>관객 합계: %{x:,}명<br>10위권 든 날수: %{customdata[0]}일<extra></extra>"
+)
+
+st.plotly_chart(fig4, use_container_width=True)
+
+st.info("**이 그래프로 알 수 있는 것:** (여기에 문구를 입력하세요)")
+
+
+# ============================================================================
+# 구역 5. (다음 그래프를 위한 자리)
+# ============================================================================
+st.header("5. 다음 그래프 자리")
 st.write("앞으로 이 자리에 새로운 그래프를 추가할 예정입니다.")
