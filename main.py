@@ -69,10 +69,34 @@ st.info("**이 그래프로 알 수 있는 것:** (여기에 문구를 입력하
 
 
 # ============================================================================
-# 구역 2. (다음 그래프를 위한 자리)
+# 구역 2. 누적 관객 상위 5편의 일별 관객 수 변화 (다중 선 그래프)
 # ============================================================================
-st.header("2. 다음 그래프 자리")
-st.write("앞으로 이 자리에 새로운 그래프를 추가할 예정입니다.")
+st.header("2. 이 기간 일관객 합계 상위 5편의 변화")
+
+# 영화별 일관객 합계를 구해 상위 5편 선정
+top5_movies = (
+    df.groupby("영화명")["일관객"].sum().sort_values(ascending=False).head(5).index
+)
+
+top5_df = df[df["영화명"].isin(top5_movies)].sort_values("날짜")
+
+fig2 = px.line(
+    top5_df,
+    x="날짜",
+    y="일관객",
+    color="영화명",
+    markers=True,
+    title="일관객 합계 상위 5편의 날짜별 일관객 변화",
+    labels={"날짜": "날짜", "일관객": "일일 관객 수", "영화명": "영화명"},
+)
+fig2.update_traces(
+    hovertemplate="영화: %{fullData.name}<br>날짜: %{x|%Y-%m-%d}<br>관객 수: %{y:,}명<extra></extra>"
+)
+fig2.update_layout(hovermode="x unified", legend_title_text="영화명 (클릭해서 켜고 끄기)")
+
+st.plotly_chart(fig2, use_container_width=True)
+
+st.info("**이 그래프로 알 수 있는 것:** (여기에 문구를 입력하세요)")
 
 
 # ============================================================================
