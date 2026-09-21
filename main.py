@@ -1,6 +1,16 @@
+import subprocess
+import sys
+
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+
+# plotly가 설치되어 있지 않은 배포 환경(예: requirements.txt 미반영)을 대비해
+# 자동으로 설치를 시도합니다.
+try:
+    import plotly.express as px
+except ModuleNotFoundError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "plotly"])
+    import plotly.express as px
 
 # ----------------------------------------------------------------------------
 # 기본 설정
