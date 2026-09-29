@@ -23,7 +23,7 @@ st.set_page_config(
 st.title("영화 데이터 그래프 도감 1 - 시간")
 st.caption("KOBIS 일별 박스오피스 데이터를 활용한 시간 축 그래프 모음")
 
-DATA_URL = "https://raw.githubusercontent.com/greatsong/modudata/main/data/kobis_daily.csv"
+DATA_URL = "https://raw.githubusercontent.com/happykth/data/main/kobis_movies.csv"
 
 
 # ----------------------------------------------------------------------------
